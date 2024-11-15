@@ -1,6 +1,6 @@
 const MikroNode = require("mikronode");
 
-async function getMikroTikData(ip, username, password) {
+const getMikroTikData = async (ip, username, password) => {
   return new Promise((resolve, reject) => {
     const device = new MikroNode(ip);
     device
@@ -27,7 +27,7 @@ async function getMikroTikData(ip, username, password) {
       })
       .catch(reject);
   });
-}
+};
 
 module.exports = {
   getMikroTikData,

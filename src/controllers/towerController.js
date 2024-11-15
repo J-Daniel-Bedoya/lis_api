@@ -1,32 +1,63 @@
-const sectorService = require("../services/sectorService");
+const towerService = require("../services/towerService");
 
-exports.getTowers = async (req, res) => {
+const createTower = async (req, res) => {
   try {
-    const towers = await Tower.findAll({
-      include: [{ model: Sector, as: "sectors" }],
-    });
+    const { name } = req.body;
+    const tower = await towerService.createTower(name);
+    res.status(201).json(tower);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getAllTowers = async (req, res) => {
+  try {
+    const towers = await towerService.getAllTowers();
     res.json(towers);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-exports.getSectorsByTower = async (req, res) => {
+const getTowerById = async (req, res) => {
   try {
-    const towerId = req.params.towerId;
-    const tower = await sectorService.getSectorsByTower(towerId);
+    const { id } = req.params;
+    const tower = await towerService.getTowerById(id);
+    if (tower) {
+      res.json(tower);
+    } else {
+      res.status(404).json({ error: "Torre no encontrada" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const updateTower = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const tower = await towerService.updateTower(id, name);
     res.json(tower);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-exports.getSectorData = async (req, res) => {
+const deleteTower = async (req, res) => {
   try {
-    const sectorIp = req.params.sectorIp;
-    const data = await sectorService.getSectorData(sectorIp);
-    res.json(data);
+    const { id } = req.params;
+    await towerService.deleteTower(id);
+    res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+module.exports = {
+  getAllTowers,
+  getTowerById,
+  createTower,
+  updateTower,
+  deleteTower,
 };

@@ -1,6 +1,6 @@
 const sectorService = require("../services/sectorService");
 
-exports.createSector = async (req, res) => {
+const createSector = async (req, res) => {
   try {
     const { name, ip, description, towerId } = req.body;
     const sector = await sectorService.createSector(
@@ -15,7 +15,7 @@ exports.createSector = async (req, res) => {
   }
 };
 
-exports.getAllSectors = async (req, res) => {
+const getAllSectors = async (req, res) => {
   try {
     const sectors = await sectorService.getAllSectors();
     res.json(sectors);
@@ -25,7 +25,7 @@ exports.getAllSectors = async (req, res) => {
 };
 
 // Obtener un sector por ID e incluir datos en tiempo real de MikroTik
-exports.getSectorById = async (req, res) => {
+const getSectorById = async (req, res) => {
   try {
     const { id } = req.params;
     const sector = await sectorService.getSectorById(id);
@@ -35,7 +35,7 @@ exports.getSectorById = async (req, res) => {
   }
 };
 
-exports.updateSector = async (req, res) => {
+const updateSector = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -46,7 +46,7 @@ exports.updateSector = async (req, res) => {
   }
 };
 
-exports.deleteSector = async (req, res) => {
+const deleteSector = async (req, res) => {
   try {
     const { id } = req.params;
     await sectorService.deleteSector(id);
@@ -54,4 +54,12 @@ exports.deleteSector = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+module.exports = {
+  createSector,
+  getAllSectors,
+  getSectorById,
+  updateSector,
+  deleteSector,
 };
