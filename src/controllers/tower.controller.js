@@ -1,9 +1,10 @@
-const towerService = require("../services/towerService");
+const { TowerService } = require("../services");
 
 const createTower = async (req, res) => {
   try {
-    const { name } = req.body;
-    const tower = await towerService.createTower(name);
+    const body = req.body;
+
+    const tower = await TowerService.createTower(body);
     res.status(201).json(tower);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -12,7 +13,7 @@ const createTower = async (req, res) => {
 
 const getAllTowers = async (req, res) => {
   try {
-    const towers = await towerService.getAllTowers();
+    const towers = await TowerService.getAllTowers();
     res.json(towers);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -22,7 +23,7 @@ const getAllTowers = async (req, res) => {
 const getTowerById = async (req, res) => {
   try {
     const { id } = req.params;
-    const tower = await towerService.getTowerById(id);
+    const tower = await TowerService.getTowerById(id);
     if (tower) {
       res.json(tower);
     } else {
@@ -37,7 +38,7 @@ const updateTower = async (req, res) => {
   try {
     const { id } = req.params;
     const { name } = req.body;
-    const tower = await towerService.updateTower(id, name);
+    const tower = await TowerService.updateTower(id, name);
     res.json(tower);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -47,7 +48,7 @@ const updateTower = async (req, res) => {
 const deleteTower = async (req, res) => {
   try {
     const { id } = req.params;
-    await towerService.deleteTower(id);
+    await TowerService.deleteTower(id);
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: error.message });

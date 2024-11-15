@@ -1,5 +1,5 @@
-const Sector = require("../models/Sector");
-const { getMikroTikData } = require("./mikrotikService");
+const { Sector } = require("../models");
+const { getMikroTikData } = require("./mikrotik.service");
 
 // Crear un nuevo sector
 class SectorService {
@@ -27,8 +27,8 @@ class SectorService {
     try {
       const mikrotikData = await getMikroTikData(
         sector.ip,
-        "admin",
-        "password"
+        "Administrador2024",
+        "%JuTrJr.E!bo@To~=Kn2A2yMNbdY1e"
       ); // Ajusta el usuario y contraseña
       return { ...sector.toJSON(), mikrotikData };
     } catch (error) {

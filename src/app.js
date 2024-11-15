@@ -3,12 +3,15 @@ const morgan = require("morgan");
 const cors = require("cors");
 const db = require("./utils/database");
 const handleError = require("./middlewares/error");
-const towerRoutes = require("./routes/towerRoutes");
+const initModels = require("./models/initModels");
+const { SectorRoutes, TowerRoutes } = require("./routes");
 
 const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
+
+initModels();
 
 db.authenticate()
   .then(() => console.log("Autenticación exitosa"))
@@ -22,7 +25,8 @@ app.get("/", (req, res) => {
   res.status(200).json("Respuesta exitosa");
 });
 
-app.use("/api", towerRoutes);
+app.use("/api", TowerRoutes);
+app.use("/api", SectorRoutes);
 
 app.use(handleError);
 module.exports = app;

@@ -1,10 +1,10 @@
-const Tower = require("../models/Tower");
-const Sector = require("../models/Sector");
+const { Tower, Sector } = require("../models");
 
 class TowerService {
   static async createTower(name) {
     try {
-      return await Tower.create({ name });
+      const result = await Tower.create(name);
+      return result;
     } catch (error) {
       throw error;
     }

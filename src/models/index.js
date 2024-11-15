@@ -1,7 +1,7 @@
-const SectorModels = require("./Sector");
-const TowerModels = require("./Tower");
+const Sector = require("./Sector.model");
+const Tower = require("./Tower.model");
 
 module.exports = {
-  SectorModels,
-  TowerModels,
+  Sector,
+  Tower,
 };

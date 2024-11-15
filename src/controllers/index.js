@@ -4,7 +4,7 @@ const {
   getSectorById,
   updateSector,
   deleteSector,
-} = require("./sectorController");
+} = require("./sector.controller");
 
 const {
   createTower,
@@ -12,7 +12,7 @@ const {
   getTowerById,
   updateTower,
   deleteTower,
-} = require("./towerController");
+} = require("./tower.controller");
 
 module.exports = {
   createSector,

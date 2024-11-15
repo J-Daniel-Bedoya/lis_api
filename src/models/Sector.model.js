@@ -1,8 +1,8 @@
+const db = require("../utils/database");
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
 
-const Sector = sequelize.define(
-  "Sector",
+const Sector = db.define(
+  "sector",
   {
     name: {
       type: DataTypes.STRING,
@@ -19,6 +19,7 @@ const Sector = sequelize.define(
     towerId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      field: "tower_id",
     },
   },
   {
