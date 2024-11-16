@@ -8,35 +8,37 @@ const getMikroTikData = async (ip, username, password) => {
       .then(([login]) => {
         login(username, password)
           .then((conn) => {
-            // conn.closeOnDone(true);
-
             const chan = conn.openChannel("action", false);
             chan.sync(true);
+
+            const data = []; // Array para almacenar los datos
+
             chan
               .write("/interface/wireless/registration-table/print")
               .then((results) => {
                 const formatted = MikroNode.resultsToObj(results.data);
-                console.log("Wireless Users Connected:");
-                formatted.forEach((user) => {
-                  const name = `User ${user["radio-name"]}:`;
-                  const mac = `  MAC Address: ${user["mac-address"]}`;
-                  const ip = `  IP: ${user["last-ip"]}`;
-                  const signal = `  Signal Strength: ${user["signal-strength"]}`;
-                  const time = `  Time Connected: ${user["uptime"]}`;
 
-                  console.log(name, mac, ip, signal, time);
-                });
+                if (Array.isArray(formatted)) {
+                  // Solo agregar a `data` si `formatted` es un array
+                  data.push(...formatted);
+                } else {
+                  console.error(
+                    "Error: 'formatted' is not an array",
+                    formatted
+                  );
+                }
               })
               .catch((error) =>
                 console.error("Error during action sequence:", error)
               );
 
-            chan.on("done", (parsedData) => {
-              data.push(...parsedData);
+            // Evento "done" para resolver la promesa con los datos recolectados
+            chan.on("done", () => {
               conn.close();
               resolve(data);
             });
 
+            // Evento "error" para manejar errores y rechazar la promesa
             chan.on("error", (err) => {
               conn.close();
               reject(err);
