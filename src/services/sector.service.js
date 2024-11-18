@@ -27,8 +27,8 @@ class SectorService {
     try {
       const mikrotikData = await getMikroTikData(
         sector.ip,
-        "Administrador2024",
-        "%JuTrJr.E!bo@To~=Kn2A2yMNbdY1e"
+        process.env.MIKROTIK_USER || "Administrador2024",
+        process.env.MIKROTIK_PASSWORD || "%JuTrJr.E!bo@To~=Kn2A2yMNbdY1e"
       ); // Ajusta el usuario y contraseña
       return { ...sector.toJSON(), mikrotikData };
     } catch (error) {
@@ -39,11 +39,12 @@ class SectorService {
   static async updateSector(id, updates) {
     try {
       const sector = await Sector.findByPk(id);
-      if (sector) {
-        Object.assign(sector, updates);
-        await sector.save();
-        return sector;
+      if (!sector) {
+        throw new Error("Sector no encontrado");
       }
+      Object.assign(sector, updates);
+      await sector.save();
+      return sector;
     } catch (error) {
       throw error;
     }
@@ -51,10 +52,11 @@ class SectorService {
   static async deleteSector(id) {
     try {
       const sector = await Sector.findByPk(id);
-      if (sector) {
-        await sector.destroy();
-        return true;
+      if (!sector) {
+        throw new Error("Sector no encontrado");
       }
+      await sector.destroy();
+      return true;
     } catch (error) {
       throw error;
     }

@@ -1,14 +1,14 @@
 const { Tower, Sector } = require("../models");
 
 class TowerService {
-  static async createTower(name) {
+  static async createTower(data) {
     try {
-      const result = await Tower.create(name);
-      return result;
+      return await Tower.create(data);
     } catch (error) {
       throw error;
     }
   }
+
   static async getAllTowers() {
     try {
       return await Tower.findAll({
@@ -18,6 +18,7 @@ class TowerService {
       throw error;
     }
   }
+
   static async getTowerById(id) {
     try {
       return await Tower.findByPk(id, {
@@ -27,25 +28,29 @@ class TowerService {
       throw error;
     }
   }
+
   static async updateTower(id, newName) {
     try {
       const tower = await Tower.findByPk(id);
-      if (tower) {
-        tower.name = newName;
-        await tower.save();
-        return tower;
+      if (!tower) {
+        throw new Error("Tower not found");
       }
+      tower.name = newName;
+      await tower.save();
+      return tower;
     } catch (error) {
       throw error;
     }
   }
+
   static async deleteTower(id) {
     try {
       const tower = await Tower.findByPk(id);
-      if (tower) {
-        await tower.destroy();
-        return true;
+      if (!tower) {
+        throw new Error("Tower not found");
       }
+      await tower.destroy();
+      return true;
     } catch (error) {
       throw error;
     }

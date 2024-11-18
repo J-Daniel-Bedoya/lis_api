@@ -3,7 +3,6 @@ const { TowerService } = require("../services");
 const createTower = async (req, res) => {
   try {
     const body = req.body;
-
     const tower = await TowerService.createTower(body);
     res.status(201).json(tower);
   } catch (error) {
@@ -27,7 +26,7 @@ const getTowerById = async (req, res) => {
     if (tower) {
       res.json(tower);
     } else {
-      res.status(404).json({ error: "Torre no encontrada" });
+      res.status(404).json({ error: "Tower not found" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -39,7 +38,11 @@ const updateTower = async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
     const tower = await TowerService.updateTower(id, name);
-    res.json(tower);
+    if (tower) {
+      res.json(tower);
+    } else {
+      res.status(404).json({ error: "Tower not found" });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -48,17 +51,21 @@ const updateTower = async (req, res) => {
 const deleteTower = async (req, res) => {
   try {
     const { id } = req.params;
-    await TowerService.deleteTower(id);
-    res.status(204).send();
+    const result = await TowerService.deleteTower(id);
+    if (result) {
+      res.status(204).send();
+    } else {
+      res.status(404).json({ error: "Tower not found" });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
 module.exports = {
+  createTower,
   getAllTowers,
   getTowerById,
-  createTower,
   updateTower,
   deleteTower,
 };

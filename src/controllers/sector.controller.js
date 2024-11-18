@@ -35,17 +35,24 @@ const getSectorById = async (req, res) => {
   }
 };
 
+// Editar un sector por ID
 const updateSector = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
-    const sector = await SectorService.updateSector(id, updates);
-    res.json(sector);
+    const { name, ip, description, towerId } = req.body;
+    const updatedSector = await SectorService.updateSector(id, {
+      name,
+      ip,
+      description,
+      towerId,
+    });
+    res.json(updatedSector);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+// Eliminar un sector por ID
 const deleteSector = async (req, res) => {
   try {
     const { id } = req.params;
