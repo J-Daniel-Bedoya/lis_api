@@ -19,12 +19,22 @@ const getMikroTikData = async (ip, username, password) => {
     const chan = await openChannel(conn);
 
     return new Promise((resolve, reject) => {
-      chan.on("data", (data) => {
+      const data = []; // Array para almacenar los datos
+
+      chan.on("done", (parsedData) => {
+        if (Array.isArray(parsedData)) {
+          data.push(...parsedData);
+        } else {
+          data.push(parsedData);
+        }
         resolve(data);
       });
 
+      chan.on("trap", (err) => {
+        reject(err);
+      });
+
       chan.on("error", (err) => {
-        conn.close();
         reject(err);
       });
     });

@@ -5,6 +5,7 @@ const db = require("./utils/database");
 const handleError = require("./middlewares/error");
 const initModels = require("./models/initModels");
 const { SectorRoutes, TowerRoutes } = require("./routes");
+const { connectVPN, disconnectVPN } = require("./vpn");
 
 const app = express();
 app.use(express.json());
@@ -29,4 +30,8 @@ app.use("/api", TowerRoutes);
 app.use("/api", SectorRoutes);
 
 app.use(handleError);
+
+// Conectar a la VPN al iniciar el servidor
+connectVPN();
+
 module.exports = app;

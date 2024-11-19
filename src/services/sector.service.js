@@ -27,8 +27,8 @@ class SectorService {
     try {
       const mikrotikData = await getMikroTikData(
         sector.ip,
-        process.env.MIKROTIK_USER || "Administrador2024",
-        process.env.MIKROTIK_PASSWORD || "%JuTrJr.E!bo@To~=Kn2A2yMNbdY1e"
+        process.env.MIKROTIK_USER,
+        process.env.MIKROTIK_PASSWORD
       ); // Ajusta el usuario y contraseña
       return { ...sector.toJSON(), mikrotikData };
     } catch (error) {
