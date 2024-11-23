@@ -5,7 +5,7 @@ const db = require("./utils/database");
 const handleError = require("./middlewares/error");
 const initModels = require("./models/initModels");
 const { SectorRoutes, TowerRoutes } = require("./routes");
-const { connectVPN, disconnectVPN } = require("./vpn");
+const { connectAllVPNs, disconnectAllVPNs } = require("./vpn");
 
 const app = express();
 app.use(express.json());
@@ -31,7 +31,16 @@ app.use("/api", SectorRoutes);
 
 app.use(handleError);
 
-// Conectar a la VPN al iniciar el servidor
-connectVPN();
+// Ruta para conectar todas las VPNs
+app.post("/api/connect-vpns", (req, res) => {
+  connectAllVPNs();
+  res.status(200).json({ message: "Todas las VPNs han sido conectadas" });
+});
+
+// Ruta para desconectar todas las VPNs
+app.post("/api/disconnect-vpns", (req, res) => {
+  disconnectAllVPNs();
+  res.status(200).json({ message: "Todas las VPNs han sido desconectadas" });
+});
 
 module.exports = app;

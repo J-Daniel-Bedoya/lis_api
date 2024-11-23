@@ -1,64 +1,82 @@
-const openvpnmanager = require("node-openvpn");
+const { execFile } = require("child_process");
 const path = require("path");
 
-// Configuración del cliente OpenVPN
-const vpnConfig = {
-  host: process.env.VPN_HOST_PALOB,
-  port: process.env.VPN_PORT,
-  timeout: 1500, // Tiempo de espera
-  config: path.resolve(__dirname, "path/to/your/vpn/config.ovpn"), // Ruta al archivo de configuración OpenVPN
-  user: process.env.VPN_USER,
-  pass: process.env.VPN_PASSWORD,
+const vpns = [
+  {
+    vpnName: "VPN SV PALO-BLANCO",
+    serverAddress: process.env.VPN_HOST_PALOB,
+    username: process.env.VPN_USER,
+    password: process.env.VPN_PASSWORD,
+    sharedSecret: process.env.VPN_SHARED_SECRET,
+  },
+];
+
+const connectVPN = (vpnConfig) => {
+  const scriptPath = path.resolve(__dirname, "connect-vpn.ps1");
+  execFile(
+    "powershell.exe",
+    [
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      scriptPath,
+      "-vpnName",
+      vpnConfig.vpnName,
+      "-serverAddress",
+      vpnConfig.serverAddress,
+      "-username",
+      vpnConfig.username,
+      "-password",
+      vpnConfig.password,
+      "-sharedSecret",
+      vpnConfig.sharedSecret,
+    ],
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(
+          `Error connecting to VPN ${vpnConfig.vpnName}: ${error.message}`
+        );
+        return;
+      }
+      if (stderr) {
+        console.error(`VPN ${vpnConfig.vpnName} stderr: ${stderr}`);
+        return;
+      }
+      console.log(`VPN ${vpnConfig.vpnName} stdout: ${stdout}`);
+    }
+  );
 };
 
-let vpn = null;
-
-// Función para conectar la VPN
-const connectVPN = () => {
-  console.log("Iniciando conexión VPN...");
-  vpn = openvpnmanager.connect(vpnConfig);
-
-  // Manejo de eventos de la conexión
-  vpn.on("connected", () => {
-    console.log("VPN conectada exitosamente.");
-  });
-
-  vpn.on("disconnected", () => {
-    console.error("VPN desconectada. Intentando reconectar...");
-    reconnectVPN();
-  });
-
-  vpn.on("error", (error) => {
-    console.error("Error en la conexión VPN:", error);
-  });
-
-  vpn.on("console-output", (output) => {
-    console.log("Output VPN:", output);
-  });
+const disconnectVPN = (vpnName) => {
+  const scriptPath = path.resolve(__dirname, "disconnect-vpn.ps1");
+  execFile(
+    "powershell.exe",
+    ["-ExecutionPolicy", "Bypass", "-File", scriptPath, "-vpnName", vpnName],
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(
+          `Error disconnecting from VPN ${vpnName}: ${error.message}`
+        );
+        return;
+      }
+      if (stderr) {
+        console.error(`VPN ${vpnName} stderr: ${stderr}`);
+        return;
+      }
+      console.log(`VPN ${vpnName} stdout: ${stdout}`);
+    }
+  );
 };
 
-// Función para reconectar si se desconecta
-const reconnectVPN = () => {
-  console.log("Reintentando conexión VPN...");
-  setTimeout(() => {
-    connectVPN();
-  }, 5000); // Espera 5 segundos antes de reconectar
+const connectAllVPNs = () => {
+  vpns.forEach(connectVPN);
 };
 
-// Función para desconectar manualmente la VPN
-const disconnectVPN = () => {
-  if (vpn) {
-    vpn.disconnect();
-    console.log("VPN desconectada manualmente.");
-  } else {
-    console.log("No hay conexión VPN activa.");
-  }
+const disconnectAllVPNs = () => {
+  vpns.forEach((vpn) => disconnectVPN(vpn.vpnName));
 };
-
-// Inicia la VPN automáticamente al cargar el servidor
-connectVPN();
 
 module.exports = {
-  connectVPN,
-  disconnectVPN,
+  connectAllVPNs,
+  disconnectAllVPNs,
 };
